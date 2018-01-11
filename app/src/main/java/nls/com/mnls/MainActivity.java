@@ -5,6 +5,7 @@ import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
@@ -34,6 +35,9 @@ public class MainActivity extends AppCompatActivity implements IAsrView, ITranVi
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
+            if (TextUtils.isEmpty(msg.getData().getString("RESULT"))) {
+                return;
+            }
             switch (msg.what){
                 case 1:
                     result.setText("英译汉："+msg.getData().getString("RESULT"));
@@ -81,7 +85,12 @@ public class MainActivity extends AppCompatActivity implements IAsrView, ITranVi
 
             @Override
             public void afterTextChanged(Editable editable) {
-                query = editable.toString();
+                try {
+                    query = editable.toString();
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+
 
             }
         });
@@ -145,7 +154,6 @@ public class MainActivity extends AppCompatActivity implements IAsrView, ITranVi
                 instatu.setText("已关闭");
             }
         },1000);
-
     }
 
     /**
@@ -165,7 +173,9 @@ public class MainActivity extends AppCompatActivity implements IAsrView, ITranVi
      */
     @Override
     public void showResult(String result) {
-        tresult.setText(result);
+        tresult.setText("识别结果："+result);
+        query = result;//将识别结果直接填写到翻译输入框
+        input.setText(result);
     }
 
     @Override
@@ -177,7 +187,11 @@ public class MainActivity extends AppCompatActivity implements IAsrView, ITranVi
                 Gson gson = new Gson();
                 TranInfo tranInfo = gson.fromJson(transResult, TranInfo.class);
                 Bundle bundle = new Bundle();
-                bundle.putString("RESULT",tranInfo.getTrans_result().get(0).getDst());
+               try {
+                   bundle.putString("RESULT",tranInfo.getTrans_result().get(0).getDst());
+               }catch (Exception e){
+                   e.printStackTrace();
+               }
                 message.setData(bundle);
                 handler.sendMessage(message);
                 if (ISENTOZN){

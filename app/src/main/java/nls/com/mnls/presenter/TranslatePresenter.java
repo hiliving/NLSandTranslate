@@ -24,10 +24,15 @@ public class TranslatePresenter {
     }
 
     public void getTransResult(String src,boolean isEn){
-        if (isEn){
-            iTranView.onTransResult( api.getTransResult(src, "auto", "zh"));
-        }else {
-            iTranView.onTransResult( api.getTransResult(src, "auto", "en"));
+        try {
+            if (isEn){
+                iTranView.onTransResult( api.getTransResult(src, "auto", "zh"));
+            }else {
+                iTranView.onTransResult( api.getTransResult(src, "auto", "en"));
+            }
+        }catch (Exception e){
+            e.printStackTrace();
         }
+
     }
 }

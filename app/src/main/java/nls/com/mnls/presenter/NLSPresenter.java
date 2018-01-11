@@ -20,6 +20,7 @@ import nls.com.mnls.presenter.ivew.IAsrView;
  */
 
 public class NLSPresenter{
+    private static final String TAG = "NLSPresenter";
     private boolean isRecognizing = false;
     private Context context;
     private final NlsRequest mNlsRequest;
@@ -84,7 +85,7 @@ public class NLSPresenter{
                             Log.i("asr", "[demo] callback onRecognizResult :" + result.getResult().getText());
                            /* mResultEdit.setText(resultMap.get(sentenceId));
                             mFullEdit.setText(JSON.toJSONString(result.getResult()));*/
-                           iAsrView.showResult(JSON.toJSONString(result.getResult()));
+                           iAsrView.showResult(resultMap.get(sentenceId));
                         }
                     }else {
                         Log.i("asr", "[demo] callback onRecognizResult finish!" );
@@ -112,6 +113,7 @@ public class NLSPresenter{
         @Override
         public void onStartRecognizing(NlsClient recognizer) {
             super.onStartRecognizing(recognizer);    //To change body of overridden methods use File | Settings | File Templates.
+            Log.d(TAG,"开始录音");
         }
 
         @Override
@@ -120,6 +122,7 @@ public class NLSPresenter{
             iAsrView.setResult("");
             mNlsClient.stop();
 //            mStartButton.setText("开始 录音");
+            Log.d(TAG,"结束录音");
             iAsrView.restore();
         }
 
