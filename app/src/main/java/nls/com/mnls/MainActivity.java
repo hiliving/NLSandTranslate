@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -16,13 +15,12 @@ import android.widget.TextView;
 import com.google.gson.Gson;
 
 import nls.com.mnls.bean.TranInfo;
-import nls.com.mnls.net.RetrofitClient;
-import nls.com.mnls.presenter.NLSPresenter;
+import nls.com.mnls.presenter.AsrPresenter;
+import nls.com.mnls.presenter.ivew.IasrView;
 import nls.com.mnls.presenter.TranslatePresenter;
-import nls.com.mnls.presenter.ivew.IAsrView;
 import nls.com.mnls.presenter.ivew.ITranView;
 
-public class MainActivity extends AppCompatActivity implements IAsrView, ITranView {
+public class MainActivity extends AppCompatActivity implements  ITranView, IasrView {
 
     private static boolean ISINSTANCE = false;
     private static boolean ISENTOZN = false;
@@ -51,7 +49,7 @@ public class MainActivity extends AppCompatActivity implements IAsrView, ITranVi
     };
     private Button toggle;
     private Button statutoggle;
-    private NLSPresenter presenter;
+    private AsrPresenter presenter;
     private TranslatePresenter translatePresenter;
     private TextView instatu;
     private TextView tresult;
@@ -61,13 +59,13 @@ public class MainActivity extends AppCompatActivity implements IAsrView, ITranVi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        input = findViewById(R.id.input);
-        start = findViewById(R.id.start);
-        result = findViewById(R.id.result);
-        toggle = findViewById(R.id.toggle);
-        instatu = findViewById(R.id.instatu);
-        tresult = findViewById(R.id.tresult);
-        statutoggle = findViewById(R.id.instatutoggle);
+        input = (EditText) findViewById(R.id.input);
+        start = (TextView) findViewById(R.id.start);
+        result = (TextView) findViewById(R.id.result);
+        toggle = (Button) findViewById(R.id.toggle);
+        instatu = (TextView) findViewById(R.id.instatu);
+        tresult = (TextView) findViewById(R.id.tresult);
+        statutoggle = (Button) findViewById(R.id.instatutoggle);
 
 
 
@@ -94,7 +92,7 @@ public class MainActivity extends AppCompatActivity implements IAsrView, ITranVi
 
             }
         });
-        presenter = new NLSPresenter(this,this);//语音识别方法
+        presenter = new AsrPresenter(this,this);//语音识别方法
         translatePresenter = new TranslatePresenter(this,this);//翻译方法
 
         start.setOnClickListener(new View.OnClickListener() {
@@ -140,44 +138,6 @@ public class MainActivity extends AppCompatActivity implements IAsrView, ITranVi
         });
 
     }
-
-    @Override
-    public void setResult(String s) {
-
-    }
-
-    @Override
-    public void restore() {
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                instatu.setText("已关闭");
-            }
-        },1000);
-    }
-
-    /**
-     * 语音识别实时状态
-     * @param s
-     */
-    @Override
-    public void setStatus(String s) {
-        instatu.setText(s);
-    }
-
-    /**
-     * 语音识别结果
-     *
-     * 打算结合翻译一起，语音识别结果直接进行翻译
-     * @param result
-     */
-    @Override
-    public void showResult(String result) {
-        tresult.setText("识别结果："+result);
-        query = result;//将识别结果直接填写到翻译输入框
-        input.setText(result);
-    }
-
     @Override
     public void onTransResult(final String transResult) {
         runOnUiThread(new Runnable() {
@@ -201,5 +161,34 @@ public class MainActivity extends AppCompatActivity implements IAsrView, ITranVi
                 }
             }
         });
+    }
+
+    @Override
+    public void log() {
+
+    }
+    /**
+     * 语音识别实时状态
+     * @param s
+     */
+    @Override
+    public void setStatu(String s) {
+        instatu.setText(s);
+    }
+
+    @Override
+    public void setIsRecord(String s) {
+
+    }
+    /**
+     * 语音识别结果
+     *
+     * 打算结合翻译一起，语音识别结果直接进行翻译
+     */
+    @Override
+    public void setRecResult(String s) {
+        tresult.setText("识别结果："+s);
+        query = s;
+        input.setText(s);
     }
 }

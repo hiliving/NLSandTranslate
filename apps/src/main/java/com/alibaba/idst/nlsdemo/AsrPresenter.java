@@ -1,7 +1,9 @@
-package nls.com.mnls.presenter;
+package com.alibaba.idst.nlsdemo;
 
 import android.content.Context;
 import android.util.Log;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.alibaba.fastjson.JSON;
@@ -13,24 +15,21 @@ import com.alibaba.idst.nls.realtime.internal.protocol.NlsResponse;
 
 import java.util.HashMap;
 
-import nls.com.mnls.presenter.ivew.IAsrView;
-
 /**
- * Created by huangyong on 2018/1/9.
+ * Created by Huangyong on 2018/1/11.
  */
 
-public class NLSPresenter{
-    private static final String TAG = "NLSPresenter";
-    private boolean isRecognizing = false;
+public class AsrPresenter {
     private Context context;
-    private final NlsRequest mNlsRequest;
-    private final NlsClient mNlsClient;
-    private int sentenceId = 0;
-    private IAsrView iAsrView;
+    private boolean isRecognizing = false;
+    private NlsClient mNlsClient;
+    private NlsRequest mNlsRequest;
     private HashMap<Integer,String> resultMap = new HashMap<Integer, String>();
-    public NLSPresenter(Context context,IAsrView iAsrView) {
+    private int sentenceId = 0;
+    private IasrView iasrView;
+    public AsrPresenter(Context context,IasrView iasrView) {
         this.context = context;
-        this.iAsrView = iAsrView;
+        this.iasrView = iasrView;
         String appkey = "nls-service-shurufa16khz"; //请设置文档中Appkey
 
         mNlsRequest = new NlsRequest();
@@ -44,8 +43,7 @@ public class NLSPresenter{
 
         NlsClient.openLog(true);
         NlsClient.configure(context.getApplicationContext()); //全局配置
-        //实例化NlsClient
-        mNlsClient = NlsClient.newInstance(context, mRecognizeListener, mStageListener, mNlsRequest);
+        mNlsClient = NlsClient.newInstance(context, mRecognizeListener, mStageListener,mNlsRequest);                          //实例化NlsClient
 
         mNlsClient.setMaxRecordTime(60000);  //设置最长语音
         mNlsClient.setMaxStallTime(1000);    //设置最短语音
@@ -53,21 +51,6 @@ public class NLSPresenter{
         mNlsClient.setRecordAutoStop(false);  //设置VAD
         mNlsClient.setMinVoiceValueInterval(200); //设置音量回调时长
     }
-
-    public void stop() {
-        isRecognizing = false;
-        iAsrView.setResult("");
-        mNlsClient.stop();
-    }
-
-    public void start() {
-        isRecognizing = true;
-        mNlsClient.start();
-        iAsrView.setResult("正在录音，请稍后！");
-        iAsrView.setStatus("录音中……");
-    }
-
-
     private NlsListener mRecognizeListener = new NlsListener() {
 
         @Override
@@ -83,14 +66,14 @@ public class NLSPresenter{
                             resultMap.put(sentenceId,result.getText());
 
                             Log.i("asr", "[demo] callback onRecognizResult :" + result.getResult().getText());
-                           /* mResultEdit.setText(resultMap.get(sentenceId));
-                            mFullEdit.setText(JSON.toJSONString(result.getResult()));*/
-                           iAsrView.showResult(resultMap.get(sentenceId));
+                         //   mResultEdit.setText(resultMap.get(sentenceId));
+                        //    mFullEdit.setText(JSON.toJSONString(result.getResult()));
+                            iasrView.setRecResult(JSON.toJSONString(result.getResult()));
                         }
                     }else {
                         Log.i("asr", "[demo] callback onRecognizResult finish!" );
-                       /* mResultEdit.setText("Recognize finish!");
-                        mFullEdit.setText("Recognize finish!");*/
+                      //  mResultEdit.setText("Recognize finish!");
+                      //  mFullEdit.setText("Recognize finish!");
                     }
                     break;
                 case NlsClient.ErrorCode.RECOGNIZE_ERROR:
@@ -113,17 +96,14 @@ public class NLSPresenter{
         @Override
         public void onStartRecognizing(NlsClient recognizer) {
             super.onStartRecognizing(recognizer);    //To change body of overridden methods use File | Settings | File Templates.
-            Log.d(TAG,"开始录音");
         }
 
         @Override
         public void onStopRecognizing(NlsClient recognizer) {
             super.onStopRecognizing(recognizer);    //To change body of overridden methods use File | Settings | File Templates.
-            iAsrView.setResult("");
+          //  mResultEdit.setText("");
             mNlsClient.stop();
-//            mStartButton.setText("开始 录音");
-            Log.d(TAG,"结束录音");
-            iAsrView.restore();
+           // mStartButton.setText("开始 录音");
         }
 
         @Override
@@ -140,5 +120,20 @@ public class NLSPresenter{
         public void onVoiceVolume(int volume) {
             super.onVoiceVolume(volume);
         }
+
     };
+
+    public void start() {
+        isRecognizing = true;
+        iasrView.setStatu("正在录音，请稍候！");
+        mNlsClient.start();
+        iasrView.setIsRecord("录音中。。。");
+    }
+
+    public void stop() {
+        isRecognizing = false;
+        iasrView.setStatu("");
+        mNlsClient.stop();
+        iasrView.setIsRecord("开始 录音");
+    }
 }

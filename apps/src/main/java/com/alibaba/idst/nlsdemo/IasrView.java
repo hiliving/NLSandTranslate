@@ -1,4 +1,4 @@
-package nls.com.mnls.presenter.ivew;
+package com.alibaba.idst.nlsdemo;
 
 /**
  * Created by Huangyong on 2018/1/11.

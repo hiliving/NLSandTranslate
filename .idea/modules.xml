@@ -2,8 +2,10 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/MNls.iml" filepath="$PROJECT_DIR$/MNls.iml" />
+      <module fileurl="file://$PROJECT_DIR$/NLSandTranslate.iml" filepath="$PROJECT_DIR$/NLSandTranslate.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/apps/apps.iml" filepath="$PROJECT_DIR$/apps/apps.iml" />
+      <module fileurl="file://$PROJECT_DIR$/mnls/mnls.iml" filepath="$PROJECT_DIR$/mnls/mnls.iml" />
     </modules>
   </component>
 </project>
